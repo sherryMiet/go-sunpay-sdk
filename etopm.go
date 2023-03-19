@@ -1,5 +1,10 @@
 package go_sunpay_sdk
 
+import (
+	"reflect"
+	"strconv"
+)
+
 const (
 	EtopmURL     = "https://www.esafe.com.tw/Service/Etopm.aspx"
 	TestEtopmURL = "https://test.esafe.com.tw/Service/Etopm.aspx"
@@ -32,36 +37,36 @@ type ETOPMRequestData struct {
 	DueDate           *string `json:"DueDate,omitempty"`
 	UserNo            *string `json:"UserNo,omitempty"`
 	BillDate          *string `json:"BillDate,omitempty"`
-	ProductName1      *string `json:"ProductName1,omitempty"`
-	ProductName2      *string `json:"ProductName2,omitempty"`
-	ProductName3      *string `json:"ProductName3,omitempty"`
-	ProductName4      *string `json:"ProductName4,omitempty"`
-	ProductName5      *string `json:"ProductName5,omitempty"`
-	ProductName6      *string `json:"ProductName6,omitempty"`
-	ProductName7      *string `json:"ProductName7,omitempty"`
-	ProductName8      *string `json:"ProductName8,omitempty"`
-	ProductName9      *string `json:"ProductName9,omitempty"`
-	ProductName10     *string `json:"ProductName10,omitempty"`
-	ProductPrice1     *string `json:"ProductPrice1,omitempty"`
-	ProductPrice2     *string `json:"ProductPrice2,omitempty"`
-	ProductPrice3     *string `json:"ProductPrice3,omitempty"`
-	ProductPrice4     *string `json:"ProductPrice4,omitempty"`
-	ProductPrice5     *string `json:"ProductPrice5,omitempty"`
-	ProductPrice6     *string `json:"ProductPrice6,omitempty"`
-	ProductPrice7     *string `json:"ProductPrice7,omitempty"`
-	ProductPrice8     *string `json:"ProductPrice8,omitempty"`
-	ProductPrice9     *string `json:"ProductPrice9,omitempty"`
-	ProductPrice10    *string `json:"ProductPrice10,omitempty"`
-	ProductQuantity1  *string `json:"ProductQuantity1,omitempty"`
-	ProductQuantity2  *string `json:"ProductQuantity2,omitempty"`
-	ProductQuantity3  *string `json:"ProductQuantity3,omitempty"`
-	ProductQuantity4  *string `json:"ProductQuantity4,omitempty"`
-	ProductQuantity5  *string `json:"ProductQuantity5,omitempty"`
-	ProductQuantity6  *string `json:"ProductQuantity6,omitempty"`
-	ProductQuantity7  *string `json:"ProductQuantity7,omitempty"`
-	ProductQuantity8  *string `json:"ProductQuantity8,omitempty"`
-	ProductQuantity9  *string `json:"ProductQuantity9,omitempty"`
-	ProductQuantity10 *string `json:"ProductQuantity10,omitempty"`
+	ProductName1      string  `json:"ProductName1,omitempty"`
+	ProductName2      string  `json:"ProductName2,omitempty"`
+	ProductName3      string  `json:"ProductName3,omitempty"`
+	ProductName4      string  `json:"ProductName4,omitempty"`
+	ProductName5      string  `json:"ProductName5,omitempty"`
+	ProductName6      string  `json:"ProductName6,omitempty"`
+	ProductName7      string  `json:"ProductName7,omitempty"`
+	ProductName8      string  `json:"ProductName8,omitempty"`
+	ProductName9      string  `json:"ProductName9,omitempty"`
+	ProductName10     string  `json:"ProductName10,omitempty"`
+	ProductPrice1     string  `json:"ProductPrice1,omitempty"`
+	ProductPrice2     string  `json:"ProductPrice2,omitempty"`
+	ProductPrice3     string  `json:"ProductPrice3,omitempty"`
+	ProductPrice4     string  `json:"ProductPrice4,omitempty"`
+	ProductPrice5     string  `json:"ProductPrice5,omitempty"`
+	ProductPrice6     string  `json:"ProductPrice6,omitempty"`
+	ProductPrice7     string  `json:"ProductPrice7,omitempty"`
+	ProductPrice8     string  `json:"ProductPrice8,omitempty"`
+	ProductPrice9     string  `json:"ProductPrice9,omitempty"`
+	ProductPrice10    string  `json:"ProductPrice10,omitempty"`
+	ProductQuantity1  string  `json:"ProductQuantity1,omitempty"`
+	ProductQuantity2  string  `json:"ProductQuantity2,omitempty"`
+	ProductQuantity3  string  `json:"ProductQuantity3,omitempty"`
+	ProductQuantity4  string  `json:"ProductQuantity4,omitempty"`
+	ProductQuantity5  string  `json:"ProductQuantity5,omitempty"`
+	ProductQuantity6  string  `json:"ProductQuantity6,omitempty"`
+	ProductQuantity7  string  `json:"ProductQuantity7,omitempty"`
+	ProductQuantity8  string  `json:"ProductQuantity8,omitempty"`
+	ProductQuantity9  string  `json:"ProductQuantity9,omitempty"`
+	ProductQuantity10 string  `json:"ProductQuantity10,omitempty"`
 	AgencyType        *string `json:"AgencyType,omitempty"`
 	AgencyBank        *string `json:"AgencyBank,omitempty"`
 	CargoFlag         *string `json:"CargoFlag,omitempty"`
@@ -72,6 +77,12 @@ type ETOPMRequestData struct {
 	Carrier_ID        *string `json:"Carrier_ID,omitempty"`
 	EDI               *string `json:"Carrier_ID,omitempty"`
 	ChkValue          *string `json:"ChkValue,omitempty"`
+}
+
+type Product struct {
+	ProductName     string
+	ProductPrice    int
+	ProductQuantity int
 }
 
 type EDI struct {
@@ -143,15 +154,24 @@ func (e *ETOPMRequestData) SetATM(AgencyBank, DueDate string) *ETOPMRequestData 
 	} else {
 		e.AgencyBank = &AgencyBank_LAND
 	}
-	e.ProductName1 = e.OrderInfo
-	e.ProductPrice1 = e.MN
-	e.ProductQuantity1 = &FixedQuantity
 	return e
 }
 
 func (e *ETOPMRequestData) SetCVS(DueDate string) *ETOPMRequestData {
 	e.AgencyType = &AgencyType_CVS
 	e.DueDate = &DueDate
+	return e
+}
+
+func (e *ETOPMRequestData) SetProduct(Data []Product) *ETOPMRequestData {
+	for i, p := range Data {
+		if i >= 10 {
+			return e
+		}
+		reflect.ValueOf(e).Elem().FieldByName("ProductName" + strconv.Itoa(i+1)).SetString(p.ProductName)
+		reflect.ValueOf(e).Elem().FieldByName("ProductPrice" + strconv.Itoa(i+1)).SetString(strconv.Itoa(p.ProductPrice))
+		reflect.ValueOf(e).Elem().FieldByName("ProductQuantity" + strconv.Itoa(i+1)).SetString(strconv.Itoa(p.ProductQuantity))
+	}
 	return e
 }
 
