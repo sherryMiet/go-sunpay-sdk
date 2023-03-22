@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"html/template"
+	"io/ioutil"
+	"net/http"
 	"net/url"
 	"reflect"
 	"sort"
@@ -28,9 +30,14 @@ func (c *Client) Set(MerchantID, TransPassword string) *Client {
 	return c
 }
 
-func SendSunPayRequest() error {
-
-	return nil
+func SendSunPayRequest(values url.Values, url string) (*[]byte, error) {
+	r, _ := http.PostForm(url, values)
+	defer r.Body.Close()
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return nil, err
+	}
+	return &body, nil
 }
 
 type (

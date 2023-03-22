@@ -177,7 +177,12 @@ func (e *ETOPMRequestData) SetProduct(Data []Product) *ETOPMRequestData {
 
 func (c *Client) ETOPM(Data *ETOPMRequestData) string {
 	Data.Web = &c.MerchantID
-	Data.ChkValue = SHA1(c.MerchantID + c.TransPassword + *Data.MN + *Data.Term)
+	if Data.Term != nil {
+		Data.ChkValue = SHA1(c.MerchantID + c.TransPassword + *Data.MN + *Data.Term)
+	} else {
+		Data.ChkValue = SHA1(c.MerchantID + c.TransPassword + *Data.MN)
+	}
+
 	params := StructToParamsMap(Data)
 	html := GenerateAutoSubmitHtmlForm(params, EtopmURL)
 	return html
