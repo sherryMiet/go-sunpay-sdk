@@ -21,5 +21,5 @@ func SHA256(s string) string {
 	h.Write([]byte(s))
 	bs := h.Sum(nil)
 	res := fmt.Sprintf("%x", bs)
-	return strings.ToUpper(res)
+	return strings.ToLower(res)
 }
