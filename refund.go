@@ -46,6 +46,27 @@ func (c *Client) Refund(r *RefundDataRequest) (*string, error) {
 	fmt.Println(StrBuild.String())
 	r.ChkValue = SHA256(StrBuild.String())
 	vals, _ := query.Values(r)
+	body, err := SendSunPayRequest(vals, RefundURL)
+	if err != nil {
+		return nil, err
+	}
+	res := string(*body)
+	return &res, nil
+}
+
+func (c *Client) RefundTest(r *RefundDataRequest) (*string, error) {
+	r.Web = c.MerchantID
+
+	var StrBuild strings.Builder
+	StrBuild.WriteString(c.MerchantID)
+	StrBuild.WriteString(c.TransPassword)
+	StrBuild.WriteString(r.BuySafeNo)
+	StrBuild.WriteString(r.MN)
+	StrBuild.WriteString(r.Td)
+
+	fmt.Println(StrBuild.String())
+	r.ChkValue = SHA256(StrBuild.String())
+	vals, _ := query.Values(r)
 	body, err := SendSunPayRequest(vals, TestRefundURL)
 	if err != nil {
 		return nil, err
